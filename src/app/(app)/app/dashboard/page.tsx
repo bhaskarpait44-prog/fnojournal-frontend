@@ -70,8 +70,8 @@ export default function DashboardPage() {
         <Card className="bg-[#0c0c0e] border-border/50 h-[400px] flex flex-col">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-lg text-white">Recent Trades</CardTitle>
-            <Button size="sm" variant="ghost" className="h-8 text-primary" asChild>
-              <Link href="/app/trades/add"><PlusCircle className="mr-2 h-4 w-4" /> Add</Link>
+            <Button size="sm" variant="ghost" className="h-8 text-primary" nativeButton={false} render={<Link href="/app/trades/add" />}>
+              <PlusCircle className="mr-2 h-4 w-4" /> Add
             </Button>
           </CardHeader>
           <CardContent className="flex-1 overflow-auto">

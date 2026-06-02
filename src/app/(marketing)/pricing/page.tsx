@@ -54,7 +54,7 @@ export default function PricingPage() {
               </ul>
             </CardContent>
             <CardFooter>
-              <Button className="w-full" variant="outline" render={<Link href="/signup?plan=quarterly" />}>
+              <Button className="w-full" variant="outline" nativeButton={false} render={<Link href="/signup?plan=quarterly" />}>
                 Start Free Trial
               </Button>
             </CardFooter>
@@ -89,7 +89,7 @@ export default function PricingPage() {
               </ul>
             </CardContent>
             <CardFooter>
-              <Button className="w-full bg-primary hover:bg-primary/90" render={<Link href={`/signup?plan=${isAnnual ? 'annual' : 'monthly'}`} />}>
+              <Button className="w-full bg-primary hover:bg-primary/90" nativeButton={false} render={<Link href={`/signup?plan=${isAnnual ? 'annual' : 'monthly'}`} />}>
                 Start Free Trial
               </Button>
             </CardFooter>
@@ -118,7 +118,7 @@ export default function PricingPage() {
               </ul>
             </CardContent>
             <CardFooter>
-              <Button className="w-full" variant="outline" render={<Link href={`/signup?plan=${!isAnnual ? 'annual' : 'monthly'}`} />}>
+              <Button className="w-full" variant="outline" nativeButton={false} render={<Link href={`/signup?plan=${!isAnnual ? 'annual' : 'monthly'}`} />}>
                 Start Free Trial
               </Button>
             </CardFooter>

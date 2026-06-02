@@ -30,7 +30,7 @@ export default function TradesPage() {
           <Button variant="outline" className="bg-[#0c0c0e] border-border/50 text-white hover:bg-slate-800">
             <Download className="mr-2 h-4 w-4" /> Export CSV
           </Button>
-          <Button render={<Link href="/app/trades/add" />} className="bg-primary hover:bg-primary/90">
+          <Button nativeButton={false} render={<Link href="/app/trades/add" />} className="bg-primary hover:bg-primary/90">
             <PlusCircle className="mr-2 h-4 w-4" /> Add Trade
           </Button>
         </div>
