@@ -32,11 +32,11 @@ export default function LandingPage() {
           Understand your edge. Stop repeating mistakes.
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
-          <Button size="lg" asChild className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded-full px-8 h-14 text-lg">
-            <Link href="/signup">Start 7-day trial — ₹0</Link>
+          <Button size="lg" render={<Link href="/signup" />} className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded-full px-8 h-14 text-lg">
+            Start 7-day trial — ₹0
           </Button>
-          <Button size="lg" variant="outline" asChild className="rounded-full px-8 h-14 text-lg font-semibold">
-            <Link href="#features">See how it works <ArrowRight className="ml-2 h-5 w-5" /></Link>
+          <Button size="lg" variant="outline" render={<Link href="#features" />} className="rounded-full px-8 h-14 text-lg font-semibold">
+            See how it works <ArrowRight className="ml-2 h-5 w-5" />
           </Button>
         </div>
         <p className="text-sm text-muted-foreground font-medium">Trusted by 500+ active F&O traders</p>
@@ -242,8 +242,8 @@ export default function LandingPage() {
               </ul>
             </CardContent>
             <CardFooter>
-              <Button className="w-full" variant="outline" asChild>
-                <Link href="/signup?plan=monthly">Start Free Trial</Link>
+              <Button className="w-full" variant="outline" render={<Link href="/signup?plan=monthly" />}>
+                Start Free Trial
               </Button>
             </CardFooter>
           </Card>
@@ -269,8 +269,8 @@ export default function LandingPage() {
               </ul>
             </CardContent>
             <CardFooter>
-              <Button className="w-full bg-primary hover:bg-primary/90" asChild>
-                <Link href="/signup?plan=annual">Start Free Trial</Link>
+              <Button className="w-full bg-primary hover:bg-primary/90" render={<Link href="/signup?plan=annual" />}>
+                Start Free Trial
               </Button>
             </CardFooter>
           </Card>
@@ -292,8 +292,8 @@ export default function LandingPage() {
               </ul>
             </CardContent>
             <CardFooter>
-              <Button className="w-full" variant="outline" asChild>
-                <Link href="/signup?plan=quarterly">Start Free Trial</Link>
+              <Button className="w-full" variant="outline" render={<Link href="/signup?plan=quarterly" />}>
+                Start Free Trial
               </Button>
             </CardFooter>
           </Card>
@@ -306,7 +306,7 @@ export default function LandingPage() {
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-white">Frequently Asked Questions</h2>
         </div>
-        <Accordion type="single" collapsible className="w-full">
+        <Accordion type="single" className="w-full">
           <AccordionItem value="item-1">
             <AccordionTrigger className="text-left">Which brokers are supported?</AccordionTrigger>
             <AccordionContent className="text-muted-foreground">

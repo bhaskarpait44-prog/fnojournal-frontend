@@ -54,8 +54,8 @@ export default function PricingPage() {
               </ul>
             </CardContent>
             <CardFooter>
-              <Button className="w-full" variant="outline" asChild>
-                <Link href="/signup?plan=quarterly">Start Free Trial</Link>
+              <Button className="w-full" variant="outline" render={<Link href="/signup?plan=quarterly" />}>
+                Start Free Trial
               </Button>
             </CardFooter>
           </Card>
@@ -89,8 +89,8 @@ export default function PricingPage() {
               </ul>
             </CardContent>
             <CardFooter>
-              <Button className="w-full bg-primary hover:bg-primary/90" asChild>
-                <Link href={`/signup?plan=${isAnnual ? 'annual' : 'monthly'}`}>Start Free Trial</Link>
+              <Button className="w-full bg-primary hover:bg-primary/90" render={<Link href={`/signup?plan=${isAnnual ? 'annual' : 'monthly'}`} />}>
+                Start Free Trial
               </Button>
             </CardFooter>
           </Card>
@@ -118,8 +118,8 @@ export default function PricingPage() {
               </ul>
             </CardContent>
             <CardFooter>
-              <Button className="w-full" variant="outline" asChild>
-                <Link href={`/signup?plan=${!isAnnual ? 'annual' : 'monthly'}`}>Start Free Trial</Link>
+              <Button className="w-full" variant="outline" render={<Link href={`/signup?plan=${!isAnnual ? 'annual' : 'monthly'}`} />}>
+                Start Free Trial
               </Button>
             </CardFooter>
           </Card>
@@ -185,7 +185,7 @@ export default function PricingPage() {
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-white">Frequently Asked Questions</h2>
           </div>
-          <Accordion type="single" collapsible className="w-full">
+          <Accordion type="single" className="w-full">
             <AccordionItem value="item-1">
               <AccordionTrigger className="text-left">Which brokers are supported?</AccordionTrigger>
               <AccordionContent className="text-muted-foreground">
