@@ -13,17 +13,15 @@ declare global {
   }
 }
 
+import { useUserStore } from "@/lib/stores/user-store";
+import { apiClient } from "@/lib/api-client";
+
 export default function SubscribePage() {
   const router = useRouter();
+  const { profile } = useUserStore();
   const [isLoading, setIsLoading] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [polling, setPolling] = useState(false);
-
-  // Mock user data (would come from Supabase auth session)
-  const user = {
-    name: "John Doe",
-    email: "john@example.com"
-  };
 
   useEffect(() => {
     // Load Razorpay script
@@ -45,30 +43,32 @@ export default function SubscribePage() {
     
     try {
       // 1. Create subscription via API
-      // const res = await fetch('/api/subscriptions/create', { method: 'POST', body: JSON.stringify({ planId }) });
-      // const data = await res.json();
-      // const subscriptionId = data.subscriptionId;
+      const res = await apiClient('/subscriptions/create', { 
+        method: 'POST', 
+        body: JSON.stringify({ plan_id: planId }) 
+      });
       
-      // MOCK
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      const mockSubscriptionId = "sub_mock123" + planId;
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to initiate subscription');
+      
+      // In a real Razorpay flow, data would have a razorpay_subscription_id
+      const subscriptionId = data.subscription?.razorpay_subscription_id || data.subscription?.id;
 
-      // 2. Open Razorpay
+      // 2. Open Razorpay (Using mock key as example, should be env var)
       const options = {
-        key: "rzp_test_mock_key", // Replace with actual key
-        subscription_id: mockSubscriptionId,
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_test_placeholder",
+        subscription_id: subscriptionId,
         name: "TradeLog",
-        description: "Premium F&O Trading Journal",
+        description: `${planId.charAt(0).toUpperCase() + planId.slice(1)} Subscription`,
         prefill: {
-          name: user.name,
-          email: user.email,
+          name: profile?.name || "",
+          email: profile?.email || "",
         },
         theme: {
-          color: "#3b82f6" // Primary color
+          color: "#3b82f6"
         },
         handler: function (response: any) {
-          // 3. On success, poll for status
-          handlePaymentSuccess(response.razorpay_payment_id, mockSubscriptionId);
+          handlePaymentSuccess(response.razorpay_payment_id, subscriptionId);
         }
       };
       
@@ -99,21 +99,17 @@ export default function SubscribePage() {
     const poll = setInterval(async () => {
       attempts++;
       try {
-        // MOCK: GET /api/subscriptions/status
-        // const res = await apiClient(`/subscriptions/status?id=${subscriptionId}`);
-        // const data = await res.json();
-        // if (data.status === 'active') ...
+        const res = await apiClient('/subscriptions/status');
+        const data = await res.json();
         
-        console.log(`Polling attempt ${attempts}...`);
-        
-        if (attempts >= 3) { // Mock success after 3 attempts
+        if (data.subscription?.status === 'active') {
           clearInterval(poll);
           setPolling(false);
           router.push("/app/dashboard");
         } else if (attempts >= maxAttempts) {
           clearInterval(poll);
           setPolling(false);
-          setError("Payment successful, but subscription activation is taking longer than expected. Please check your dashboard in a few minutes.");
+          setError("Payment successful, but activation is taking longer than expected. Please check your dashboard in a few minutes.");
         }
       } catch (err) {
         console.error("Polling error", err);
@@ -137,7 +133,7 @@ export default function SubscribePage() {
     <div className="min-h-screen bg-background flex flex-col items-center py-12 px-4">
       <div className="w-full max-w-5xl mx-auto text-center mb-12">
         <h1 className="text-3xl font-bold text-white mb-4">Complete your subscription</h1>
-        <p className="text-muted-foreground">Logged in as <span className="font-semibold text-white">{user.email}</span></p>
+        <p className="text-muted-foreground">Logged in as <span className="font-semibold text-white">{profile?.email}</span></p>
       </div>
 
       {error && (

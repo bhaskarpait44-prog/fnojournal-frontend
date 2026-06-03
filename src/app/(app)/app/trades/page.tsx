@@ -73,11 +73,11 @@ export default function TradesPage() {
                       <td className="px-6 py-4 font-medium">{trade.underlying} {trade.strike_price} {trade.instrument_type}</td>
                       <td className="px-6 py-4">{trade.instrument_type === 'FUT' ? 'Future' : 'Options'}</td>
                       <td className="px-6 py-4">
-                        <span className={\`px-2 py-0.5 rounded text-[10px] font-bold \${trade.action === 'BUY' ? 'bg-green-500/20 text-green-500' : 'bg-red-500/20 text-red-500'}\`}>
+                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${trade.action === 'BUY' ? 'bg-green-500/20 text-green-500' : 'bg-red-500/20 text-red-500'}`}>
                           {trade.action}
                         </span>
                       </td>
-                      <td className={\`px-6 py-4 text-right font-semibold \${trade.net_pnl >= 0 ? 'text-green-500' : 'text-red-400'}\`}>
+                      <td className={`px-6 py-4 text-right font-semibold ${trade.net_pnl >= 0 ? 'text-green-500' : 'text-red-400'}`}>
                         {formatCurrency(trade.net_pnl)}
                       </td>
                       <td className="px-6 py-4">

@@ -47,7 +47,7 @@ export default function AnalyticsPage() {
           <Card key={i} className="bg-[#0c0c0e] border-border/50">
             <CardContent className="p-4 flex flex-col items-center justify-center text-center">
               <span className="text-xs text-muted-foreground mb-1">{stat.label}</span>
-              <span className={\`text-xl font-bold \${stat.color}\`}>{stat.value}</span>
+              <span className={`text-xl font-bold ${stat.color}`}>{stat.value}</span>
             </CardContent>
           </Card>
         ))}
@@ -105,7 +105,7 @@ export default function AnalyticsPage() {
                 <div key={i} className="flex justify-between items-center p-3 rounded-lg bg-muted/20 border border-border/30">
                   <div className="font-medium text-white text-sm">{strat.name}</div>
                   <div className="text-right">
-                    <div className={\`font-semibold text-sm \${strat.pnl.startsWith('-') ? 'text-red-400' : 'text-green-500'}\`}>{strat.pnl}</div>
+                    <div className={`font-semibold text-sm ${strat.pnl.startsWith('-') ? 'text-red-400' : 'text-green-500'}`}>{strat.pnl}</div>
                     <div className="text-xs text-muted-foreground">WR: {strat.winrate}</div>
                   </div>
                 </div>

@@ -34,7 +34,7 @@ export default function JournalPage() {
                 }
 
                 return (
-                  <div key={i} className={\`h-16 rounded-md p-2 flex flex-col justify-between \${bgClass} hover:ring-2 ring-primary cursor-pointer transition-all\`}>
+                  <div key={i} className={`h-16 rounded-md p-2 flex flex-col justify-between ${bgClass} hover:ring-2 ring-primary cursor-pointer transition-all`}>
                     <span className="text-xs font-medium">{i + 1}</span>
                     {!isWeekend && bgClass.includes('green') && <span className="text-[10px] font-bold">+₹{(Math.random() * 5000).toFixed(0)}</span>}
                     {!isWeekend && bgClass.includes('red') && <span className="text-[10px] font-bold">-₹{(Math.random() * 2000).toFixed(0)}</span>}

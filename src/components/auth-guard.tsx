@@ -6,7 +6,7 @@ import { useUserStore } from "@/lib/stores/user-store";
 
 export function AuthGuard({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const { token } = useUserStore();
+  const { profile } = useUserStore();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -14,12 +14,12 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
-    if (mounted && !token) {
+    if (mounted && !profile) {
       router.push("/login");
     }
-  }, [mounted, token, router]);
+  }, [mounted, profile, router]);
 
-  if (!mounted || !token) {
+  if (!mounted || !profile) {
     return null; // Or a loading spinner
   }
 

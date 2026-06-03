@@ -23,7 +23,7 @@ export default function SignupPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [passwordStrength, setPasswordStrength] = useState(0);
-  const { setToken, setProfile } = useUserStore();
+  const { setProfile } = useUserStore();
 
   const {
     register,
@@ -59,7 +59,6 @@ export default function SignupPage() {
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || 'Signup failed');
       
-      setToken(json.token);
       setProfile(json.user);
       router.push("/app/dashboard");
     } catch (err: any) {

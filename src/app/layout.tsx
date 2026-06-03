@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import { cn } from '@/lib/utils';
 import { Providers } from '@/components/providers/query-provider';
+import { SessionProvider } from '@/components/providers/session-provider';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -57,7 +58,9 @@ export default function RootLayout({
     <html lang="en" className={cn("dark font-sans", inter.variable)} style={{ colorScheme: 'dark' }}>
       <body className="antialiased bg-background text-foreground">
         <Providers>
-          {children}
+          <SessionProvider>
+            {children}
+          </SessionProvider>
         </Providers>
       </body>
     </html>

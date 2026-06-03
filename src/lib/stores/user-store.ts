@@ -18,10 +18,8 @@ export interface SubscriptionStatus {
 }
 
 interface UserStore {
-  token: string | null;
   profile: UserProfile | null;
   subscription: SubscriptionStatus | null;
-  setToken: (token: string | null) => void;
   setProfile: (profile: UserProfile | null) => void;
   setSubscription: (sub: SubscriptionStatus | null) => void;
   logout: () => void;
@@ -30,13 +28,11 @@ interface UserStore {
 export const useUserStore = create<UserStore>()(
   persist(
     (set) => ({
-      token: null,
       profile: null,
       subscription: null,
-      setToken: (token) => set({ token }),
       setProfile: (profile) => set({ profile }),
       setSubscription: (sub) => set({ subscription: sub }),
-      logout: () => set({ token: null, profile: null, subscription: null }),
+      logout: () => set({ profile: null, subscription: null }),
     }),
     {
       name: 'auth-storage',

@@ -5,7 +5,26 @@ import { PlusCircle, TrendingUp, IndianRupee, Activity, Target } from "lucide-re
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
+import { useAnalyticsSummary } from "@/hooks/use-analytics";
+import { useTrades } from "@/hooks/use-trades";
+import { formatCurrency } from "@/lib/format";
+import { Loader2 } from "lucide-react";
+
 export default function DashboardPage() {
+  const { data: analyticsData, isLoading: analyticsLoading } = useAnalyticsSummary();
+  const { data: tradesData, isLoading: tradesLoading } = useTrades();
+
+  if (analyticsLoading || tradesLoading) {
+    return (
+      <div className="flex items-center justify-center h-[50vh]">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  const summary = analyticsData?.data;
+  const recentTrades = tradesData?.slice(0, 5) || [];
+
   return (
     <div className="space-y-6">
       {/* Stat Cards */}
@@ -13,10 +32,12 @@ export default function DashboardPage() {
         <Card className="bg-[#0c0c0e] border-border/50">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Total P&L</CardTitle>
-            <IndianRupee className="h-4 w-4 text-green-500" />
+            <IndianRupee className={`h-4 w-4 ${summary?.netPnl >= 0 ? 'text-green-500' : 'text-red-400'}`} />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-500">+₹45,231.50</div>
+            <div className={`text-2xl font-bold ${summary?.netPnl >= 0 ? 'text-green-500' : 'text-red-400'}`}>
+              {formatCurrency(summary?.netPnl || 0)}
+            </div>
             <p className="text-xs text-muted-foreground mt-1">Net after charges</p>
           </CardContent>
         </Card>
@@ -27,8 +48,8 @@ export default function DashboardPage() {
             <Target className="h-4 w-4 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-white">62.4%</div>
-            <p className="text-xs text-muted-foreground mt-1">Based on 145 trades</p>
+            <div className="text-2xl font-bold text-white">{summary?.winRate || '0%'}</div>
+            <p className="text-xs text-muted-foreground mt-1">Based on {summary?.totalTrades || 0} trades</p>
           </CardContent>
         </Card>
         
@@ -38,19 +59,19 @@ export default function DashboardPage() {
             <Activity className="h-4 w-4 text-blue-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-white">145</div>
-            <p className="text-xs text-muted-foreground mt-1">This month: 24</p>
+            <div className="text-2xl font-bold text-white">{summary?.totalTrades || 0}</div>
+            <p className="text-xs text-muted-foreground mt-1">All time trades</p>
           </CardContent>
         </Card>
         
         <Card className="bg-[#0c0c0e] border-border/50">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Current Month P&L</CardTitle>
-            <TrendingUp className="h-4 w-4 text-red-400" />
+            <CardTitle className="text-sm font-medium text-muted-foreground">Profit Factor</CardTitle>
+            <Target className="h-4 w-4 text-purple-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-red-400">-₹4,120.00</div>
-            <p className="text-xs text-muted-foreground mt-1">Needs improvement</p>
+            <div className="text-2xl font-bold text-white">{summary?.profitFactor || '0.00'}</div>
+            <p className="text-xs text-muted-foreground mt-1">Consistency score</p>
           </CardContent>
         </Card>
       </div>
@@ -61,32 +82,38 @@ export default function DashboardPage() {
           <CardHeader>
             <CardTitle className="text-lg text-white">P&L Sparkline (Last 30 Days)</CardTitle>
           </CardHeader>
-          <CardContent className="h-full flex items-center justify-center">
-            <p className="text-muted-foreground">Chart Component Placeholder</p>
+          <CardContent className="h-full flex items-center justify-center text-muted-foreground italic">
+            Chart component loading...
           </CardContent>
         </Card>
 
-        {/* Recent Trades Table Placeholder */}
+        {/* Recent Trades Table */}
         <Card className="bg-[#0c0c0e] border-border/50 h-[400px] flex flex-col">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-lg text-white">Recent Trades</CardTitle>
-            <Button size="sm" variant="ghost" className="h-8 text-primary" nativeButton={false} render={<Link href="/app/trades/add" />}>
-              <PlusCircle className="mr-2 h-4 w-4" /> Add
+            <Button size="sm" variant="ghost" className="h-8 text-primary" asChild>
+              <Link href="/app/trades/add">
+                <PlusCircle className="mr-2 h-4 w-4" /> Add
+              </Link>
             </Button>
           </CardHeader>
           <CardContent className="flex-1 overflow-auto">
              <div className="space-y-4 mt-4">
-               {[1, 2, 3, 4, 5].map((i) => (
-                 <div key={i} className="flex justify-between items-center p-3 rounded-lg bg-muted/20 border border-border/30">
-                   <div>
-                     <div className="font-medium text-white text-sm">BANKNIFTY 45000 CE</div>
-                     <div className="text-xs text-muted-foreground">14 Jul 2026</div>
+               {recentTrades.length === 0 ? (
+                 <p className="text-center text-muted-foreground text-sm mt-8 italic">No trades yet. Add your first trade!</p>
+               ) : (
+                 recentTrades.map((trade: any) => (
+                   <div key={trade.id} className="flex justify-between items-center p-3 rounded-lg bg-muted/20 border border-border/30">
+                     <div>
+                       <div className="font-medium text-white text-sm">{trade.underlying} {trade.strike_price || ''} {trade.instrument_type}</div>
+                       <div className="text-xs text-muted-foreground">{new Date(trade.entry_datetime).toLocaleDateString()}</div>
+                     </div>
+                     <div className={`font-semibold ${Number(trade.net_pnl) >= 0 ? 'text-green-500' : 'text-red-400'}`}>
+                       {formatCurrency(trade.net_pnl)}
+                     </div>
                    </div>
-                   <div className={`font-semibold ${i % 3 === 0 ? 'text-red-400' : 'text-green-500'}`}>
-                     {i % 3 === 0 ? '-₹1,200' : '+₹3,450'}
-                   </div>
-                 </div>
-               ))}
+                 ))
+               )}
              </div>
           </CardContent>
         </Card>

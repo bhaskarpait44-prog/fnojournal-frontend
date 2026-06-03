@@ -113,14 +113,14 @@ export default function AddTradePage() {
       <div className="mb-8">
         <div className="flex items-center justify-between relative">
           <div className="absolute left-0 top-1/2 w-full h-1 bg-border/50 -z-10"></div>
-          <div className="absolute left-0 top-1/2 h-1 bg-primary -z-10 transition-all duration-300" style={{ width: \`\${((step - 1) / (totalSteps - 1)) * 100}%\` }}></div>
+          <div className="absolute left-0 top-1/2 h-1 bg-primary -z-10 transition-all duration-300" style={{ width: `${((step - 1) / (totalSteps - 1)) * 100}%` }}></div>
           
           {[1, 2, 3].map((i) => (
             <div key={i} className="flex flex-col items-center">
-              <div className={\`w-10 h-10 rounded-full flex items-center justify-center font-bold border-4 \${step >= i ? 'bg-primary border-[#0c0c0e] text-primary-foreground' : 'bg-slate-800 border-[#0c0c0e] text-muted-foreground'}\`}>
+              <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold border-4 ${step >= i ? 'bg-primary border-[#0c0c0e] text-primary-foreground' : 'bg-slate-800 border-[#0c0c0e] text-muted-foreground'}`}>
                 {step > i ? <CheckCircle2 className="h-5 w-5" /> : i}
               </div>
-              <span className={\`text-xs mt-2 font-medium \${step >= i ? 'text-white' : 'text-muted-foreground'}\`}>
+              <span className={`text-xs mt-2 font-medium ${step >= i ? 'text-white' : 'text-muted-foreground'}`}>
                 {i === 1 ? 'Basics' : i === 2 ? 'Execution' : 'Review'}
               </span>
             </div>
@@ -267,7 +267,7 @@ export default function AddTradePage() {
                 <div className="p-4 rounded-lg bg-slate-900 border border-slate-800 grid grid-cols-2 gap-y-3 gap-x-8 text-sm">
                   <div className="flex justify-between border-b border-border/30 pb-1">
                     <span className="text-muted-foreground">Gross P&L:</span> 
-                    <span className={\`font-semibold \${charges.grossPnl >= 0 ? 'text-green-500' : 'text-red-400'}\`}>
+                    <span className={`font-semibold ${charges.grossPnl >= 0 ? 'text-green-500' : 'text-red-400'}`}>
                       {formatCurrency(charges.grossPnl)}
                     </span>
                   </div>
@@ -289,7 +289,7 @@ export default function AddTradePage() {
                   </div>
                   <div className="flex justify-between pt-1 col-span-2">
                     <span className="text-white font-bold">Net P&L:</span> 
-                    <span className={\`font-bold text-lg \${charges.netPnl >= 0 ? 'text-green-500' : 'text-red-400'}\`}>
+                    <span className={`font-bold text-lg ${charges.netPnl >= 0 ? 'text-green-500' : 'text-red-400'}`}>
                       {formatCurrency(charges.netPnl)}
                     </span>
                   </div>

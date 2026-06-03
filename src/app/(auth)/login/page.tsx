@@ -19,7 +19,7 @@ export default function LoginPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { setToken, setProfile } = useUserStore();
+  const { setProfile } = useUserStore();
 
   const {
     register,
@@ -42,7 +42,6 @@ export default function LoginPage() {
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || 'Login failed');
       
-      setToken(json.token);
       setProfile(json.user);
 
       router.push("/app/dashboard");
