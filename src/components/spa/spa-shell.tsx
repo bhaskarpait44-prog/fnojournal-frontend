@@ -32,7 +32,7 @@ export function SPAShell({
   const pathname = usePathname();
   const router = useRouter();
   
-  const { isSidebarOpen, setSidebarOpen, pageTitle, setPageTitle } = useAppStore();
+  const { sidebarOpen, setSidebarOpen, pageTitle, setPageTitle } = useAppStore();
   const { profile, subscription } = useUserStore();
 
   // Set title based on pathname
@@ -56,29 +56,29 @@ export function SPAShell({
     { name: "Billing", href: "/app/billing", icon: CreditCard },
   ];
 
-  const toggleSidebar = () => setSidebarOpen(!isSidebarOpen);
+  const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
   return (
     <div className="flex h-screen bg-[#09090b] text-white overflow-hidden">
       {/* SIDEBAR (Desktop) */}
       <aside
         className={`hidden md:flex flex-col border-r border-border/50 bg-[#0c0c0e] transition-all duration-300 ${
-          isSidebarOpen ? "w-64" : "w-20"
+          sidebarOpen ? "w-64" : "w-20"
         }`}
       >
         <div className="h-16 flex items-center justify-between px-4 border-b border-border/50">
-          {isSidebarOpen && (
+          {sidebarOpen && (
             <Link href="/app/dashboard" className="font-bold text-xl tracking-tight text-white">
               TradeLog
             </Link>
           )}
-          {!isSidebarOpen && (
+          {!sidebarOpen && (
             <Link href="/app/dashboard" className="font-bold text-xl tracking-tight text-white mx-auto">
               TL
             </Link>
           )}
           <button onClick={toggleSidebar} className="text-muted-foreground hover:text-white">
-            {isSidebarOpen ? <ChevronLeft size={20} /> : <ChevronRight size={20} className="mx-auto" />}
+            {sidebarOpen ? <ChevronLeft size={20} /> : <ChevronRight size={20} className="mx-auto" />}
           </button>
         </div>
 
@@ -99,8 +99,8 @@ export function SPAShell({
                     : "text-muted-foreground hover:text-white hover:bg-muted/30"
                 }`}
               >
-                <item.icon size={20} className={`shrink-0 ${isSidebarOpen ? "mr-3" : "mx-auto"}`} />
-                {isSidebarOpen && <span>{item.name}</span>}
+                <item.icon size={20} className={`shrink-0 ${sidebarOpen ? "mr-3" : "mx-auto"}`} />
+                {sidebarOpen && <span>{item.name}</span>}
               </Link>
             );
           })}
@@ -108,7 +108,7 @@ export function SPAShell({
 
         {/* Subscription Badge */}
         <div className="p-4 border-t border-border/50">
-          {isSidebarOpen ? (
+          {sidebarOpen ? (
             <div className="flex items-center gap-3 p-3 rounded-lg border border-border/50 bg-background/50">
               <div className="h-2 w-2 rounded-full bg-green-500"></div>
               <div className="text-sm">

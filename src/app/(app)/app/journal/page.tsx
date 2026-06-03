@@ -1,43 +1,75 @@
 "use client";
 
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useDailyPnl } from "@/hooks/use-analytics";
+import { formatCurrency } from "@/lib/format";
+import { Loader2 } from "lucide-react";
 
 export default function JournalPage() {
+  const { data: dailyPnL, isLoading } = useDailyPnl();
+  const [currentDate] = useState(new Date());
+
+  const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
+  const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).getDay();
+
+  const monthName = currentDate.toLocaleString('default', { month: 'long' });
+  const year = currentDate.getFullYear();
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-[50vh]">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <Card className="bg-[#0c0c0e] border-border/50">
-        <CardHeader>
-          <CardTitle className="text-lg text-white">Trading Calendar</CardTitle>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle className="text-lg text-white">{monthName} {year}</CardTitle>
+          <div className="flex gap-2">
+            <div className="flex items-center gap-1">
+              <div className="w-3 h-3 bg-green-500/20 border border-green-500/30 rounded" />
+              <span className="text-[10px] text-muted-foreground">Profit</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <div className="w-3 h-3 bg-red-500/20 border border-red-500/30 rounded" />
+              <span className="text-[10px] text-muted-foreground">Loss</span>
+            </div>
+          </div>
         </CardHeader>
         <CardContent>
-          <div className="flex justify-center py-8">
+          <div className="flex justify-center py-4">
             <div className="grid grid-cols-7 gap-2 max-w-3xl w-full">
               {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
                 <div key={day} className="text-center text-xs text-muted-foreground mb-2">{day}</div>
               ))}
               
               {/* Padding for month start */}
-              <div className="h-16 rounded-md"></div>
-              <div className="h-16 rounded-md"></div>
-              <div className="h-16 rounded-md"></div>
+              {Array.from({ length: firstDayOfMonth }).map((_, i) => (
+                <div key={`pad-${i}`} className="h-16 md:h-20 rounded-md bg-transparent"></div>
+              ))}
               
               {/* Days */}
-              {Array.from({length: 31}).map((_, i) => {
-                // Randomly assign green, red, or slate
-                const isWeekend = (i + 3) % 7 === 0 || (i + 4) % 7 === 0;
-                let bgClass = "bg-slate-800/50 border border-slate-700/50";
+              {Array.from({ length: daysInMonth }).map((_, i) => {
+                const day = i + 1;
+                const dateStr = `${year}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const pnl = dailyPnL?.[dateStr];
                 
-                if (!isWeekend) {
-                  const rand = Math.random();
-                  if (rand > 0.6) bgClass = "bg-green-500/20 border border-green-500/30 text-green-500";
-                  else if (rand > 0.3) bgClass = "bg-red-500/20 border border-red-500/30 text-red-500";
-                }
+                let bgClass = "bg-muted/10 border border-border/20 text-muted-foreground";
+                if (pnl > 0) bgClass = "bg-green-500/10 border border-green-500/30 text-green-500";
+                else if (pnl < 0) bgClass = "bg-red-500/10 border border-red-500/30 text-red-500";
 
                 return (
-                  <div key={i} className={`h-16 rounded-md p-2 flex flex-col justify-between ${bgClass} hover:ring-2 ring-primary cursor-pointer transition-all`}>
-                    <span className="text-xs font-medium">{i + 1}</span>
-                    {!isWeekend && bgClass.includes('green') && <span className="text-[10px] font-bold">+₹{(Math.random() * 5000).toFixed(0)}</span>}
-                    {!isWeekend && bgClass.includes('red') && <span className="text-[10px] font-bold">-₹{(Math.random() * 2000).toFixed(0)}</span>}
+                  <div key={day} className={`h-16 md:h-20 rounded-md p-1.5 md:p-2 flex flex-col justify-between ${bgClass} hover:ring-1 ring-primary cursor-pointer transition-all`}>
+                    <span className="text-[10px] md:text-xs font-medium">{day}</span>
+                    {pnl !== undefined && (
+                      <span className="text-[9px] md:text-[10px] font-bold truncate">
+                        {pnl > 0 ? '+' : ''}{formatCurrency(pnl)}
+                      </span>
+                    )}
                   </div>
                 );
               })}
@@ -49,19 +81,10 @@ export default function JournalPage() {
       <div className="grid md:grid-cols-2 gap-6">
         <Card className="bg-[#0c0c0e] border-border/50">
           <CardHeader>
-            <CardTitle className="text-lg text-white">Selected Day: 15 Jul 2026</CardTitle>
+            <CardTitle className="text-lg text-white">Daily Insight</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              <div className="p-4 rounded-lg bg-green-500/10 border border-green-500/30">
-                <h3 className="font-semibold text-green-500 mb-2">Net P&L: +₹3,450.00</h3>
-                <p className="text-sm text-slate-300 mb-4">"Followed my setup perfectly. Waited for the 15min candle to close above VWAP before entering the BANKNIFTY 45000 CE."</p>
-                <div className="flex gap-2">
-                  <span className="px-2 py-1 rounded bg-slate-800 text-xs text-muted-foreground">2 Trades</span>
-                  <span className="px-2 py-1 rounded bg-slate-800 text-xs text-muted-foreground">100% Win Rate</span>
-                </div>
-              </div>
-            </div>
+            <p className="text-sm text-muted-foreground italic">Click on a day to see detailed trade notes and screenshots.</p>
           </CardContent>
         </Card>
       </div>

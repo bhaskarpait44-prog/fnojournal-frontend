@@ -1,7 +1,8 @@
 export const LOT_SIZES = {
-  NIFTY: 50,
+  NIFTY: 25,
   BANKNIFTY: 15,
   FINNIFTY: 40,
+  MIDCPNIFTY: 75,
 } as const;
 
 export const CHARGE_RATES = {
@@ -13,4 +14,4 @@ export const CHARGE_RATES = {
   SEBI_CHARGES_PER_CRORE: 10,
 } as const;
 
-export type UnderlyingSymbol = keyof typeof LOT_SIZES | 'STOCK';
+export type UnderlyingSymbol = string;

@@ -19,7 +19,7 @@ export const signupSchema = z.object({
 });
 
 export const tradeSchema = z.object({
-  underlying: z.enum(['NIFTY', 'BANKNIFTY', 'FINNIFTY', 'STOCK']),
+  underlying: z.string().min(1, 'Underlying symbol is required'),
   instrument_type: z.enum(['CE', 'PE', 'FUT']),
   strike_price: z.number().nullable().optional(),
   expiry_date: z.string().min(1, 'Expiry date is required'),
@@ -30,6 +30,11 @@ export const tradeSchema = z.object({
   exit_price: z.number().positive('Exit price must be positive'),
   lots: z.number().int().positive('Lots must be at least 1'),
   lot_size: z.number().int().positive(),
+  brokerage: z.number().min(0).default(0),
+  stt: z.number().min(0).default(0),
+  exchange_charges: z.number().min(0).default(0),
+  gst: z.number().min(0).default(0),
+  sebi_charges: z.number().min(0).default(0),
   strategy_tag: z.string().nullable().optional(),
   notes: z.string().nullable().optional(),
 });

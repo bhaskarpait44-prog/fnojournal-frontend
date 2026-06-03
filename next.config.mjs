@@ -1,8 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    serverComponentsExternalPackages: ['razorpay'],
-  },
+  serverExternalPackages: ['razorpay'],
 };
 
 export default nextConfig;

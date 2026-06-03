@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
 
 export interface UserProfile {
   id: string;
@@ -25,17 +24,10 @@ interface UserStore {
   logout: () => void;
 }
 
-export const useUserStore = create<UserStore>()(
-  persist(
-    (set) => ({
-      profile: null,
-      subscription: null,
-      setProfile: (profile) => set({ profile }),
-      setSubscription: (sub) => set({ subscription: sub }),
-      logout: () => set({ profile: null, subscription: null }),
-    }),
-    {
-      name: 'auth-storage',
-    }
-  )
-);
+export const useUserStore = create<UserStore>()((set) => ({
+  profile: null,
+  subscription: null,
+  setProfile: (profile) => set({ profile }),
+  setSubscription: (sub) => set({ subscription: sub }),
+  logout: () => set({ profile: null, subscription: null }),
+}));

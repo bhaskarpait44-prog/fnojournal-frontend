@@ -15,7 +15,9 @@ import { signupSchema, SignupFormValues } from "@/lib/validations";
 import { useUserStore } from "@/lib/stores/user-store";
 import { apiClient } from "@/lib/api-client";
 
-export default function SignupPage() {
+import { Suspense } from "react";
+
+function SignupForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const plan = searchParams.get("plan") || "monthly";
@@ -174,5 +176,13 @@ export default function SignupPage() {
         </div>
       </CardFooter>
     </Card>
+  );
+}
+
+export default function SignupPage() {
+  return (
+    <Suspense fallback={<div className="mt-12 text-center text-muted-foreground"><Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" /> Loading signup form...</div>}>
+      <SignupForm />
+    </Suspense>
   );
 }

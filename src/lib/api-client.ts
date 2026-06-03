@@ -17,8 +17,9 @@ export const apiClient = async (endpoint: string, options: RequestInit = {}) => 
 
   if (response.status === 401 || response.status === 403) {
     useUserStore.getState().logout();
-    // Redirect logic moved to interceptor or hook if needed, 
-    // but keeping basic structure for now
+    if (typeof window !== 'undefined') {
+      window.location.href = '/login';
+    }
   }
 
   return response;

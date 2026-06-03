@@ -6,13 +6,13 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
 import { useAnalyticsSummary } from "@/hooks/use-analytics";
-import { useTrades } from "@/hooks/use-trades";
+import { useTradesList } from "@/hooks/use-trades";
 import { formatCurrency } from "@/lib/format";
 import { Loader2 } from "lucide-react";
 
 export default function DashboardPage() {
-  const { data: analyticsData, isLoading: analyticsLoading } = useAnalyticsSummary();
-  const { data: tradesData, isLoading: tradesLoading } = useTrades();
+  const { data: summary, isLoading: analyticsLoading } = useAnalyticsSummary('all');
+  const { data: tradesData, isLoading: tradesLoading } = useTradesList();
 
   if (analyticsLoading || tradesLoading) {
     return (
@@ -22,7 +22,6 @@ export default function DashboardPage() {
     );
   }
 
-  const summary = analyticsData?.data;
   const recentTrades = tradesData?.slice(0, 5) || [];
 
   return (
@@ -32,10 +31,10 @@ export default function DashboardPage() {
         <Card className="bg-[#0c0c0e] border-border/50">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Total P&L</CardTitle>
-            <IndianRupee className={`h-4 w-4 ${summary?.netPnl >= 0 ? 'text-green-500' : 'text-red-400'}`} />
+            <IndianRupee className={`h-4 w-4 ${(summary?.netPnl || 0) >= 0 ? 'text-green-500' : 'text-red-400'}`} />
           </CardHeader>
           <CardContent>
-            <div className={`text-2xl font-bold ${summary?.netPnl >= 0 ? 'text-green-500' : 'text-red-400'}`}>
+            <div className={`text-2xl font-bold ${(summary?.netPnl || 0) >= 0 ? 'text-green-500' : 'text-red-400'}`}>
               {formatCurrency(summary?.netPnl || 0)}
             </div>
             <p className="text-xs text-muted-foreground mt-1">Net after charges</p>
@@ -80,10 +79,12 @@ export default function DashboardPage() {
         {/* P&L Chart Placeholder */}
         <Card className="md:col-span-2 bg-[#0c0c0e] border-border/50 h-[400px]">
           <CardHeader>
-            <CardTitle className="text-lg text-white">P&L Sparkline (Last 30 Days)</CardTitle>
+            <CardTitle className="text-lg text-white">Quick Summary</CardTitle>
           </CardHeader>
-          <CardContent className="h-full flex items-center justify-center text-muted-foreground italic">
-            Chart component loading...
+          <CardContent className="h-full flex flex-col items-center justify-center text-muted-foreground">
+            <TrendingUp className="h-12 w-12 mb-4 text-primary/20" />
+            <p className="text-sm">Welcome back! You have made {summary?.totalTrades || 0} trades so far.</p>
+            <p className="text-xs mt-2 text-muted-foreground">Go to Analytics for detailed performance charts.</p>
           </CardContent>
         </Card>
 

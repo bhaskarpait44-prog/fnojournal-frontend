@@ -38,3 +38,15 @@ export function useStrategyPerformance() {
     },
   });
 }
+
+export function useDailyPnl() {
+  return useQuery({
+    queryKey: ['analytics', 'daily-pnl'],
+    queryFn: async () => {
+      const res = await apiClient('/analytics/daily-pnl');
+      if (!res.ok) throw new Error('Failed to fetch daily pnl');
+      const json = await res.json();
+      return json.data;
+    },
+  });
+}

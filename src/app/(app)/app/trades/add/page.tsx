@@ -15,10 +15,23 @@ import { formatCurrency } from "@/lib/format";
 
 import { apiClient } from "@/lib/api-client";
 
+interface SymbolItem {
+  symbol: string;
+  name: string;
+  lot_size: number;
+}
+
+interface SymbolData {
+  indices: SymbolItem[];
+  stocks: SymbolItem[];
+}
+
 export default function AddTradePage() {
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [symbols, setSymbols] = useState<SymbolData | null>(null);
+  const [isLoadingSymbols, setIsLoadingSymbols] = useState(true);
   const totalSteps = 3;
 
   const {
@@ -28,13 +41,13 @@ export default function AddTradePage() {
     setValue,
     formState: { errors },
   } = useForm<TradeFormValues>({
-    resolver: zodResolver(tradeSchema),
+    resolver: zodResolver(tradeSchema) as any,
     defaultValues: {
       underlying: 'BANKNIFTY',
       instrument_type: 'CE',
       action: 'BUY',
       lots: 1,
-      lot_size: LOT_SIZES.BANKNIFTY,
+      lot_size: 15,
     }
   });
 
@@ -44,12 +57,35 @@ export default function AddTradePage() {
   const watchExitPrice = watch("exit_price");
   const watchAction = watch("action");
 
+  // Fetch symbols
+  useEffect(() => {
+    async function fetchSymbols() {
+      try {
+        const res = await apiClient('/symbols');
+        if (res.ok) {
+          const data = await res.json();
+          setSymbols(data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch symbols:', error);
+      } finally {
+        setIsLoadingSymbols(false);
+      }
+    }
+    fetchSymbols();
+  }, []);
+
   // Update lot size when underlying changes
   useEffect(() => {
-    if (watchUnderlying !== 'STOCK') {
-      setValue('lot_size', LOT_SIZES[watchUnderlying as keyof typeof LOT_SIZES]);
+    if (!symbols) return;
+    
+    const allSymbols = [...symbols.indices, ...symbols.stocks];
+    const selectedSymbol = allSymbols.find(s => s.symbol === watchUnderlying);
+    
+    if (selectedSymbol) {
+      setValue('lot_size', selectedSymbol.lot_size);
     }
-  }, [watchUnderlying, setValue]);
+  }, [watchUnderlying, symbols, setValue]);
 
   // Calculate charges
   const calculateCharges = () => {
@@ -146,10 +182,23 @@ export default function AddTradePage() {
                       {...register("underlying")}
                       className="flex h-10 w-full rounded-md border border-slate-800 bg-slate-900 px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-primary"
                     >
-                      <option value="NIFTY">Nifty 50</option>
-                      <option value="BANKNIFTY">Bank Nifty</option>
-                      <option value="FINNIFTY">Fin Nifty</option>
-                      <option value="STOCK">Stock</option>
+                      {isLoadingSymbols ? (
+                        <option>Loading symbols...</option>
+                      ) : (
+                        <>
+                          <optgroup label="Indices">
+                            {symbols?.indices.map(s => (
+                              <option key={s.symbol} value={s.symbol}>{s.name}</option>
+                            ))}
+                          </optgroup>
+                          <optgroup label="Stocks">
+                            {symbols?.stocks.map(s => (
+                              <option key={s.symbol} value={s.symbol}>{s.symbol} - {s.name}</option>
+                            ))}
+                          </optgroup>
+                          <option value="CUSTOM">Custom / Other</option>
+                        </>
+                      )}
                     </select>
                   </div>
                   <div className="space-y-2">
@@ -255,7 +304,7 @@ export default function AddTradePage() {
                       type="number" 
                       className="bg-slate-900 border-slate-800 text-muted-foreground" 
                       {...register("lot_size", { valueAsNumber: true })}
-                      readOnly={watchUnderlying !== 'STOCK'}
+                      readOnly={watchUnderlying !== 'CUSTOM'}
                     />
                   </div>
                 </div>
